@@ -3,7 +3,7 @@ project(keesto)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(keesto main.cpp application.cpp application.h Utils.h Resources.cpp Resources.h Utils.cpp Define.h Socket.cpp Socket.h)
+add_executable(keesto src/main.cpp src/application.cpp src/headers/application.h src/headers/Utils.h src/Resources.cpp src/headers/Resources.h src/Utils.cpp src/headers/Define.h src/Socket.cpp src/headers/Socket.h src/WebServer.cpp)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
