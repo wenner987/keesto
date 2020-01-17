@@ -7,6 +7,8 @@
 #include "headers/application.h"
 #include "headers/Socket.h"
 
+#include <iostream>
+
 application::application(){
-    server_socket socket1((short)1234);
+    server_socket socket1(1234);
 }

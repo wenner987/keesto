@@ -3,3 +3,9 @@
 //
 
 #include "headers/WebServer.h"
+
+WebServer::WebServer(boost::asio::ip::tcp::socket socket):
+    socket_(std::move(socket)){
+
+}
+

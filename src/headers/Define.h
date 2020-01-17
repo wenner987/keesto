@@ -5,6 +5,6 @@
 #ifndef KEESTO_DEFINE_H
 #define KEESTO_DEFINE_H
 
-#define CONF_LOCATION "../conf/server.cnf"
+#define CONF_LOCATION "../../conf/server.cnf"
 
 #endif //KEESTO_DEFINE_H

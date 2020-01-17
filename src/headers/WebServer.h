@@ -6,8 +6,13 @@
 #define KEESTO_WEBSERVER_H
 
 
-class WebServer {
+#include <boost/asio/ip/tcp.hpp>
 
+class WebServer {
+private:
+    boost::asio::ip::tcp::socket socket_;
+public:
+    WebServer(boost::asio::ip::tcp::socket socket);
 };
 
 
