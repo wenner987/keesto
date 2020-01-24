@@ -25,14 +25,22 @@ public:
 
     ~HttpString();
 
-    const char* c_str();
+    const char * c_str() const;
 
     int length;
 
     HttpString* cat(HttpString rval);
 
+    HttpString* cat(char ch);
+
     std::shared_ptr<HttpString> split(int start_pos, int end_pos);
 
+    void strip(char ch = '\0');
+
+    HttpString operator=(HttpString value);
+    int operator<(const HttpString& value) const;
+
+    void reset();
 };
 
 

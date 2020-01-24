@@ -7,12 +7,26 @@
 
 
 #include <boost/asio/ip/tcp.hpp>
+#include <memory>
+#include "HttpRequest.h"
+#include "HttpResponse.h"
 
-class WebServer {
+class WebServer: public std::enable_shared_from_this<WebServer>{
 private:
     boost::asio::ip::tcp::socket socket_;
+    std::shared_ptr<HttpRequest> http_request;
+    std::shared_ptr<HttpResponse> http_response;
+
+    void read_message();
+
+    void invoke();
+
 public:
     WebServer(boost::asio::ip::tcp::socket socket);
+
+    void write_some(const HttpString response_string);
+
+    void start();
 };
 
 
