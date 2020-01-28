@@ -22,12 +22,12 @@ private:
     void get_headers_(char* msg);
     void get_method_(char* msg);
     void get_parameters_(char* msg);
-    void get_cookies_(char* msg);
+    void get_cookies_();
     void get_url_(char* msg);
 
     void set_header_(HttpString* key, HttpString* value);
-    void set_method_(HTTP_METHOD method);
-    void set_parameter(HttpString parameter_k, HttpString parameter_v);
+    void set_method_(const char* method);
+    void set_parameter(HttpString* parameter_k, HttpString* parameter_v);
     void set_cookie(HttpString cookie_k, HttpString cookie_v);
 
 public:

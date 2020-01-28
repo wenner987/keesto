@@ -31,7 +31,6 @@ void WebServer::read_message() {
     socket_.write_some(boost::asio::buffer("HTTP/1.1 200 OK\n\n"
                                            "<h1>hello</h1>\n"));
 
-    this->write_some("ssssxxas");
     if(socket_.is_open()){
         socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_type::shutdown_both);
         socket_.close();

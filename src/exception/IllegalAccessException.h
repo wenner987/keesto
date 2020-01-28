@@ -9,7 +9,7 @@
 
 class IllegalAccessException: public exception{
 public:
-    IllegalAccessException(char *file, int line) : exception(file, line, "Illegal access exception.") {}
+    IllegalAccessException(const char *file, int line) : exception(file, line, "Illegal access exception.") {}
 };
 
 #endif //KEESTO_ILLEGALACCESSEXCEPTION_H

@@ -21,14 +21,16 @@ enum HTTP_METHOD{
 class Utils {
 private:
     std::shared_ptr<Resources> resources;
+
+    char hex_2_char(const char* hex);
 public:
     Utils();
 
     static std::shared_ptr<Utils> utils;
 
-    std::shared_ptr<Resources> getResources(){
-        return this->resources;
-    }
+    std::shared_ptr<Resources> get_resources();
+
+    std::shared_ptr<char>url_decode(const char* src);
 };
 
 

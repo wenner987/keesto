@@ -3,23 +3,22 @@
 //
 
 #include "headers/HttpString.h"
+#include "exception/IllegalAccessException.h"
 
 #include <cstring>
 #include <iostream>
-#include <boost/assert.hpp>
-
-#include "exception/IllegalAccessException.h"
-
 
 HttpString::HttpString(){
     base = nullptr;
     length = capacity = 0;
 }
+
 HttpString::HttpString(size_t size){
     base = new char[size + 5];
     length = 0;
     capacity = size + 3;
 }
+
 HttpString::HttpString(const HttpString& string){
     base = new char[string.length];
     length = capacity = string.length;
@@ -32,6 +31,7 @@ HttpString::HttpString(std::string string){
     capacity = length + 5;
     memcpy(base, string.c_str(), string.size());
 }
+
 HttpString::HttpString(const char* string){
     capacity = length = strlen(string);
     if(length != 0)
