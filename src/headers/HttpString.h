@@ -25,6 +25,8 @@ public:
 
     ~HttpString();
 
+    HttpString operator=(HttpString& string);
+
     const char * c_str() const;
 
     int length;
@@ -37,7 +39,6 @@ public:
 
     void strip(char ch = '\0');
 
-    HttpString operator=(HttpString value);
     int operator<(const HttpString& value) const;
 
     void reset();

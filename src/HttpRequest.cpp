@@ -7,19 +7,28 @@
 #include <cstring>
 #include <iostream>
 
-// TODO write it tomorrow.
 void HttpRequest::get_headers_(char* msg){
-    char* header = msg;
-    while(*header != '\n') header++;
-    header++;
-    int len = strlen(header);
+    while(*msg != '\n') msg++;
+    msg++;
     bool is_key = true;
-    HttpString* key = new HttpString(10);
-    HttpString* value = new HttpString(30);
-
-    delete value;
-    delete key;
+    HttpString key(30);
+    HttpString value(300);
+    for(int i = 0;msg[i] != '\0';i++){
+        if(msg[i] == ':' && is_key){
+            is_key = false;
+        }
+        else if(msg[i] == '\n'){
+            set_header_(new HttpString{key}, new HttpString{value});
+            key.reset();
+            value.reset();
+            is_key = true;
+        }
+        else if(msg[i] != ' '){
+            is_key ? key.cat(msg[i]) : value.cat(msg[i]);
+        }
+    }
 }
+
 void HttpRequest::get_method_(char* msg){
     char* method = new char[10];
     for(int i = 0;msg[i] != ' ';i++){
@@ -41,14 +50,14 @@ void HttpRequest::get_parameters_(char* msg){
         }
         parameter[len] = '\0';
         std::shared_ptr<char> para_dec = Utils::utils->url_decode(parameter);
-        HttpString* key = new HttpString(256);
-        HttpString* value = new HttpString(4096);
+        HttpString key(256);
+        HttpString value(4096);
         bool is_key = true;
         for(int i = 0;para_dec.get()[i] != '\0';i++){
             if(para_dec.get()[i] == '&' || para_dec.get()[i] == '\0'){
-                set_parameter(key, value);
-                key = new HttpString(256);
-                value = new HttpString(4096);
+                set_parameter(new HttpString{key}, new HttpString{value});
+                key.reset();
+                value.reset();
                 is_key = true;
             }
             else if(para_dec.get()[i] == '='){
@@ -56,15 +65,15 @@ void HttpRequest::get_parameters_(char* msg){
             }
             else{
                 if(is_key){
-                    key->cat(para_dec.get()[i]);
+                    key.cat(para_dec.get()[i]);
                 }
                 else{
-                    value->cat(para_dec.get()[i]);
+                    value.cat(para_dec.get()[i]);
                 }
             }
         }
         delete[] parameter;
-        set_parameter(key, value);
+        set_parameter(new HttpString{key}, new HttpString{value});
     }
     else{
 
@@ -75,10 +84,17 @@ void HttpRequest::get_cookies_(){
 //        std::cout << iter.first->c_str() << "   " << iter.second->c_str() << std::endl;
 //    }
 //    std::cout << this->get_header("Cookie")->c_str() << std::endl;
+HttpString* cookie = get_header("Cookie");
+if(cookie != nullptr){
+    std::cout << cookie->c_str() << std::endl;
+}
+else{
+    std::cout << "no cookie" << std::endl;
+}
 }
 
 void HttpRequest::set_header_(HttpString* key, HttpString* value){
-    this->headers[std::shared_ptr<HttpString>{key}] = std::shared_ptr<HttpString>{value};
+    (*this->headers)[key] = value;
 }
 
 void HttpRequest::set_method_(const char* method){
@@ -106,24 +122,27 @@ void HttpRequest::set_method_(const char* method){
 }
 
 void HttpRequest::set_parameter(HttpString* parameter_k, HttpString* parameter_v){
-    this->parameters[std::shared_ptr<HttpString>(parameter_k)] = std::shared_ptr<HttpString>(parameter_v);
+    (*this->parameters)[parameter_k] = parameter_v;
 }
+
 void HttpRequest::set_cookie(HttpString cookie_k, HttpString cookie_v){
 
 }
 
 
-std::shared_ptr<HttpString> HttpRequest::get_parameter(HttpString name){
+HttpString* HttpRequest::get_parameter(HttpString name){
 
 }
-std::shared_ptr<HttpString> HttpRequest::get_header(HttpString name){
-    for(auto iter: this->headers){
-        if(strcmp(iter.first->c_str(), name.c_str())){
+HttpString* HttpRequest::get_header(HttpString name){
+    for(auto iter: *this->headers){
+        if(strcmp(iter.first->c_str(), name.c_str()) == 0){
             return iter.second;
         }
     }
+    return nullptr;
 }
-std::shared_ptr<HttpString> HttpRequest::get_cookie(HttpString name){
+
+HttpString* HttpRequest::get_cookie(HttpString name){
 
 }
 HTTP_METHOD HttpRequest::get_method(){
@@ -131,6 +150,11 @@ HTTP_METHOD HttpRequest::get_method(){
 }
 
 HttpRequest::HttpRequest(char* msg){
+    std::cout << msg << std::endl;
+    headers = new std::map<HttpString*, HttpString*>{};
+    parameters = new std::map<HttpString*, HttpString*>{};
+    cookies = new std::map<HttpString*, HttpString*>{};
+    url = new char[2048];
     get_method_(msg);
     get_url_(msg);
     get_headers_(msg);
@@ -148,10 +172,29 @@ void HttpRequest::get_url_(char *msg) {
         msg++;
     }
     uri[len] = '\0';
-    url = Utils::utils->url_decode(uri);
+    strcpy(url, Utils::utils->url_decode(uri).get());
     delete[] uri;
 }
 
-std::shared_ptr<HttpString> HttpRequest::get_url(){
-    return std::make_shared<HttpString>(this->url.get());
+HttpString & HttpRequest::get_url(){
+//    return reinterpret_cast<HttpString &>(this->url);
+}
+
+void field_delete(std::map<HttpString*, HttpString*>* val){
+    for(auto iter: *val){
+        delete iter.second;
+        val->erase(iter.first);
+        delete iter.first;
+    }
+}
+
+HttpRequest::~HttpRequest(){
+    field_delete(headers);
+    delete this->headers;
+    field_delete(parameters);
+    delete this->parameters;
+    field_delete(cookies);
+    delete this->cookies;
+    if(this->url != nullptr)
+        delete[] url;
 }

@@ -10,5 +10,5 @@
 #include <iostream>
 
 application::application(){
-    server_socket socket1(1234);
+    server_socket socket(1234);
 }

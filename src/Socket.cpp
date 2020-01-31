@@ -19,8 +19,9 @@ void server_socket::do_read() {
     acceptor_.async_accept(
             [this](boost::system::error_code ec, boost::asio::ip::tcp::socket socket){
                 if (!ec){
-                    std::shared_ptr<WebServer> server = std::make_shared<WebServer>(std::move(socket));
-                    server->start();
+                    WebServer* web_server = new WebServer{std::move(socket)};
+                    web_server->start();
+                    delete web_server;
                 }
                 socket.close();
                 do_read();

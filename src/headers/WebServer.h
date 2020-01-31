@@ -14,8 +14,8 @@
 class WebServer: public std::enable_shared_from_this<WebServer>{
 private:
     boost::asio::ip::tcp::socket socket_;
-    std::shared_ptr<HttpRequest> http_request;
-    std::shared_ptr<HttpResponse> http_response;
+    HttpRequest* http_request;
+    HttpResponse* http_response;
 
     void read_message();
 
@@ -23,6 +23,8 @@ private:
 
 public:
     WebServer(boost::asio::ip::tcp::socket socket);
+
+    ~WebServer();
 
     void write_some(const HttpString response_string);
 

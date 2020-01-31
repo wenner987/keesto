@@ -14,10 +14,10 @@
 class HttpRequest {
 private:
     HTTP_METHOD method;
-    std::map<std::shared_ptr<HttpString>, std::shared_ptr<HttpString>> headers;
-    std::map<std::shared_ptr<HttpString>, std::shared_ptr<HttpString>> parameters;
-    std::map<std::shared_ptr<HttpString>, std::shared_ptr<HttpString>> cookies;
-    std::shared_ptr<char> url;
+    std::map<HttpString*, HttpString*>* headers;
+    std::map<HttpString*, HttpString*>* parameters;
+    std::map<HttpString*, HttpString*>* cookies;
+    char* url = nullptr;
 
     void get_headers_(char* msg);
     void get_method_(char* msg);
@@ -32,12 +32,12 @@ private:
 
 public:
     HttpRequest(char *msg);
+    ~HttpRequest();
 
-
-    std::shared_ptr<HttpString> get_parameter(HttpString name);
-    std::shared_ptr<HttpString> get_header(HttpString name);
-    std::shared_ptr<HttpString> get_cookie(HttpString name);
-    std::shared_ptr<HttpString> get_url();
+    HttpString* get_parameter(HttpString name);
+    HttpString* get_header(HttpString name);
+    HttpString* get_cookie(HttpString name);
+    HttpString& get_url();
     HTTP_METHOD get_method();
 };
 

@@ -22,14 +22,17 @@ void WebServer::read_message() {
     socket_.read_some(boost::asio::buffer(buf), err);
 
     if(!err){
-        http_request = std::make_shared<HttpRequest>(buf.c_array());
+        http_request = new HttpRequest(buf.c_array());
 //        http_request = std::make_shared<HttpResponse>();
     }
     else{
         std::cerr << err.message() << std::endl;
     }
-    socket_.write_some(boost::asio::buffer("HTTP/1.1 200 OK\n\n"
-                                           "<h1>hello</h1>\n"));
+    socket_.write_some(boost::asio::buffer(
+            "HTTP/1.1 200 OK\n"
+            "content-type: text/html; charset=utf-8\n\n"
+            "<h1>hello</h1>\n"
+            ));
 
     if(socket_.is_open()){
         socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_type::shutdown_both);
@@ -46,4 +49,9 @@ void WebServer::write_some(const HttpString response_string){
         this->socket_.write_some(boost::asio::buffer(response, response_string.length));
     }
     catch (...){}
+}
+
+WebServer::~WebServer(){
+    delete this->http_response;
+    delete this->http_request;
 }

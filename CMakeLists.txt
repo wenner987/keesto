@@ -26,8 +26,6 @@ add_executable(keesto
         src/exception/IllegalAccessException.h
         )
 
-SET(CMAKE_BUILD_TYPE Debug)
-
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(keesto Threads::Threads)

@@ -34,9 +34,13 @@ HttpString::HttpString(std::string string){
 
 HttpString::HttpString(const char* string){
     capacity = length = strlen(string);
-    if(length != 0)
+    if(length != 0){
         base = new char[length];
-    memcpy(base, string, sizeof(char) * length);
+        memcpy(base, string, sizeof(char) * length);
+    }
+    else{
+        base = nullptr;
+    }
 }
 
 const char * HttpString::c_str() const {
@@ -121,11 +125,12 @@ void HttpString::strip(char ch){
     return;
 }
 
-HttpString HttpString::operator=(HttpString value){
+HttpString HttpString::operator=(HttpString& value){
     this->length = value.length;
     this->capacity = value.capacity;
     this->base = new char[this->capacity];
     strcpy(this->base, value.base);
+    return *this;
 }
 
 int HttpString::operator<(const HttpString& value)const{
