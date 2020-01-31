@@ -19,11 +19,9 @@ Resources::~Resources(){
 void Resources::read_conf(std::string path){
     std::ifstream ifs{path, std::ios::binary};
 
-//    char* cnf_line = new char[512];
     std::string cnf_line;
     char* front = new char[32];
     char* end = new char[32];
-//    memset(cnf_line, 0, sizeof(char) * 512);
     while(getline(ifs, cnf_line)){
         if(cnf_line == "") continue;
         int status = 0; // record front or end in a line

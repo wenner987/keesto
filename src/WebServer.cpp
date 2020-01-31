@@ -28,8 +28,9 @@ void WebServer::read_message() {
     else{
         std::cerr << err.message() << std::endl;
     }
+    if(buf[0] == 0) return;
     socket_.write_some(boost::asio::buffer(
-            "HTTP/1.1 200 OK\n"
+            "HTTP/1.1 404 OK\n"
             "content-type: text/html; charset=utf-8\n\n"
             "<h1>hello</h1>\n"
             ));

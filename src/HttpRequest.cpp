@@ -189,12 +189,23 @@ void field_delete(std::map<HttpString*, HttpString*>* val){
 }
 
 HttpRequest::~HttpRequest(){
-    field_delete(headers);
-    delete this->headers;
-    field_delete(parameters);
-    delete this->parameters;
-    field_delete(cookies);
-    delete this->cookies;
-    if(this->url != nullptr)
+    if(headers != nullptr){
+        field_delete(headers);
+        delete this->headers;
+        headers = nullptr;
+    }
+    if(parameters != nullptr){
+        field_delete(parameters);
+        delete this->parameters;
+        parameters = nullptr;
+    }
+    if(cookies != nullptr){
+        field_delete(cookies);
+        delete this->cookies;
+        cookies = nullptr;
+    }
+    if(this->url != nullptr){
         delete[] url;
+        this->url = nullptr;
+    }
 }
