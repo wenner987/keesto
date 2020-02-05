@@ -1,0 +1,18 @@
+[global]
+default_dynamic_library = dynamic.so
+default_location = /tmp/keesto/build/debug/apps/
+403_page = /tmp/keesto/default/403.html
+404_page = /tmp/keesto/default/404.html
+
+[mapper0]
+method = GET
+path = /index
+dynamic_library = xxx
+function_name = test
+
+[mysql]
+url =
+username =
+password =
+max_connection =
+min_connection =

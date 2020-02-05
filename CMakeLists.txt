@@ -24,8 +24,10 @@ add_executable(keesto
         src/exception/exception.h
         src/exception/FileNotFoundException.h
         src/exception/IllegalAccessException.h
-        )
+        src/headers/Mapper.h src/Mapper.cpp src/headers/MapperEntity.h src/headers/MysqlConfig.h)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 target_link_libraries(keesto Threads::Threads)
+target_link_libraries(keesto dl)
+target_link_libraries(keesto boost_filesystem)

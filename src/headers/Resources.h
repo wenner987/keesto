@@ -7,8 +7,6 @@
 
 #include <map>
 
-#include "Define.h"
-
 
 class Resources {
 private:
@@ -19,7 +17,7 @@ public:
     Resources();
     ~Resources();
 
-    const char* getConfig(const char* name);
+    const char* get_config(const char* name);
 };
 
 

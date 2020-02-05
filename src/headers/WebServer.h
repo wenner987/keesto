@@ -18,17 +18,20 @@ private:
     HttpResponse* http_response;
 
     void read_message();
-
-    void invoke();
-
+    void invoke(std::string path);
+    void return_403();
+    void return_static(std::string& path);
+    void return_404();
+    bool purview_check(std::string name);
 public:
     WebServer(boost::asio::ip::tcp::socket socket);
 
     ~WebServer();
 
-    void write_some(const HttpString response_string);
+    void write_some(const HttpString& response_string);
 
     void start();
+
 };
 
 

@@ -10,5 +10,6 @@
 #include <iostream>
 
 application::application(){
+    signal(SIGSEGV, Utils::single_handler);
     server_socket socket(1234);
 }

@@ -28,7 +28,7 @@ private:
     void set_header_(HttpString* key, HttpString* value);
     void set_method_(const char* method);
     void set_parameter(HttpString* parameter_k, HttpString* parameter_v);
-    void set_cookie(HttpString cookie_k, HttpString cookie_v);
+    void set_cookie(HttpString* cookie_k, HttpString* cookie_v);
 
 public:
     HttpRequest(char *msg);
@@ -37,7 +37,7 @@ public:
     HttpString* get_parameter(HttpString name);
     HttpString* get_header(HttpString name);
     HttpString* get_cookie(HttpString name);
-    HttpString& get_url();
+    HttpString get_url();
     HTTP_METHOD get_method();
 };
 

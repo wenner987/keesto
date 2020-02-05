@@ -7,22 +7,25 @@
 
 #include <boost/shared_ptr.hpp>
 #include "Resources.h"
+#include "Mapper.h"
 
-enum HTTP_METHOD{
-    HTTP_METHOD_GET = 1,
-    HTTP_METHOD_POST,
-    HTTP_METHOD_PUT,
-    HTTP_METHOD_DELETE,
-    HTTP_METHOD_HEAD,
-    HTTP_METHOD_TRACE,
-    HTTP_METHOD_OPTIONS
-};
+class HttpRequest;
+class HttpResponse;
 
 class Utils {
 private:
+    typedef void (*handler)(HttpRequest*, HttpResponse*);
+
     std::shared_ptr<Resources> resources;
 
+    std::shared_ptr<Mapper> mapper;
+
+    std::map<std::string, handler> handlers;
+
+    std::map<std::string, void*> dynamic_library;
+
     char hex_2_char(const char* hex);
+
 public:
     Utils();
 
@@ -30,7 +33,15 @@ public:
 
     std::shared_ptr<Resources> get_resources();
 
+    std::shared_ptr<Mapper> load_mapper();
+
     std::shared_ptr<char>url_decode(const char* src);
+
+    static void single_handler(int sig);
+
+    static void set_method(const char* src, HTTP_METHOD* dst);
+
+    handler get_handler(const char* name);
 };
 
 

@@ -18,6 +18,8 @@ void HttpRequest::get_headers_(char* msg){
             is_key = false;
         }
         else if(msg[i] == '\n'){
+            key.strip();
+            value.strip();
             set_header_(new HttpString{key}, new HttpString{value});
             key.reset();
             value.reset();
@@ -41,7 +43,8 @@ void HttpRequest::get_method_(char* msg){
 void HttpRequest::get_parameters_(char* msg){
     if(this->method == HTTP_METHOD_GET){
         char *parameter = new char[1024];
-        while(*msg != '?') msg++;
+        while(*msg != '?' && *msg != '\0') msg++;
+        if(*msg == '\0') return;
         msg++;
         int len = 0;
         while(*msg != ' '){
@@ -80,17 +83,31 @@ void HttpRequest::get_parameters_(char* msg){
     }
 }
 void HttpRequest::get_cookies_(){
-//    for(auto iter: this->headers){
-//        std::cout << iter.first->c_str() << "   " << iter.second->c_str() << std::endl;
-//    }
-//    std::cout << this->get_header("Cookie")->c_str() << std::endl;
-HttpString* cookie = get_header("Cookie");
-if(cookie != nullptr){
-    std::cout << cookie->c_str() << std::endl;
-}
-else{
-    std::cout << "no cookie" << std::endl;
-}
+    HttpString* cookie = get_header("Cookie");
+    if(cookie == nullptr) return;
+    for(auto iter: *this->headers){
+        if(!(strcmp(iter.first->c_str(), "Cookie"))){
+            this->headers->erase(iter.first);
+            delete iter.first;
+            break;
+        }
+    }
+    bool is_key = true;
+    HttpString key{64}, value{64};
+    for(int i = 0;i < cookie->length;i++){
+        if(cookie->c_str()[i] == '='){
+            is_key = false;
+        }
+        else if(cookie->c_str()[i] == ';'){
+            set_cookie(
+                    new HttpString{Utils::utils->url_decode(key.c_str()).get()},
+                    new HttpString{Utils::utils->url_decode(value.c_str()).get()});
+        }
+        else{
+            is_key ? key.cat(cookie->c_str()[i]) : value.cat(cookie->c_str()[i]);
+        }
+    }
+    delete cookie;
 }
 
 void HttpRequest::set_header_(HttpString* key, HttpString* value){
@@ -98,41 +115,27 @@ void HttpRequest::set_header_(HttpString* key, HttpString* value){
 }
 
 void HttpRequest::set_method_(const char* method){
-    if(strcmp(method, "GET") == 0){
-        this->method = HTTP_METHOD_GET;
-    }
-    else if(strcmp(method, "POST") == 0){
-        this->method = HTTP_METHOD_POST;
-    }
-    else if(strcmp(method, "DELETE") == 0){
-        this->method = HTTP_METHOD_DELETE;
-    }
-    else if(strcmp(method, "PUT") == 0){
-        this->method = HTTP_METHOD_PUT;
-    }
-    else if(strcmp(method, "HEAD") == 0){
-        this->method = HTTP_METHOD_HEAD;
-    }
-    else if(strcmp(method, "TRACE")){
-        this->method = HTTP_METHOD_TRACE;
-    }
-    else{
-        this->method = HTTP_METHOD_OPTIONS;
-    }
+    Utils::set_method(method, &this->method);
 }
 
 void HttpRequest::set_parameter(HttpString* parameter_k, HttpString* parameter_v){
     (*this->parameters)[parameter_k] = parameter_v;
 }
 
-void HttpRequest::set_cookie(HttpString cookie_k, HttpString cookie_v){
-
+void HttpRequest::set_cookie(HttpString* cookie_k, HttpString* cookie_v){
+    (*this->cookies)[cookie_k] = cookie_v;
 }
 
 
 HttpString* HttpRequest::get_parameter(HttpString name){
-
+    for(auto iter: *this->parameters){
+        if(strcmp(iter.first->c_str(), name.c_str()) == 0){
+            return iter.second;
+        }
+    }
+    return nullptr;
 }
+
 HttpString* HttpRequest::get_header(HttpString name){
     for(auto iter: *this->headers){
         if(strcmp(iter.first->c_str(), name.c_str()) == 0){
@@ -143,14 +146,18 @@ HttpString* HttpRequest::get_header(HttpString name){
 }
 
 HttpString* HttpRequest::get_cookie(HttpString name){
-
+    for(auto iter: *this->cookies){
+        if(strcmp(iter.first->c_str(), name.c_str()) == 0){
+            return iter.second;
+        }
+    }
+    return nullptr;
 }
 HTTP_METHOD HttpRequest::get_method(){
-
+    return this->method;
 }
 
 HttpRequest::HttpRequest(char* msg){
-    std::cout << msg << std::endl;
     headers = new std::map<HttpString*, HttpString*>{};
     parameters = new std::map<HttpString*, HttpString*>{};
     cookies = new std::map<HttpString*, HttpString*>{};
@@ -176,8 +183,8 @@ void HttpRequest::get_url_(char *msg) {
     delete[] uri;
 }
 
-HttpString & HttpRequest::get_url(){
-//    return reinterpret_cast<HttpString &>(this->url);
+HttpString HttpRequest::get_url(){
+    return this->url;
 }
 
 void field_delete(std::map<HttpString*, HttpString*>* val){

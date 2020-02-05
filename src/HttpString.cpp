@@ -20,9 +20,9 @@ HttpString::HttpString(size_t size){
 }
 
 HttpString::HttpString(const HttpString& string){
-    base = new char[string.length];
+    base = new char[string.length + 5];
     length = capacity = string.length;
-    memcpy(base, string.base, string.length * sizeof(char) + 1);
+    strcpy(base, string.base);
 }
 
 HttpString::HttpString(std::string string){
@@ -35,8 +35,9 @@ HttpString::HttpString(std::string string){
 HttpString::HttpString(const char* string){
     capacity = length = strlen(string);
     if(length != 0){
-        base = new char[length];
+        base = new char[length + 5];
         memcpy(base, string, sizeof(char) * length);
+        this->base[length] = '\0';
     }
     else{
         base = nullptr;
@@ -57,7 +58,7 @@ HttpString* HttpString::cat(HttpString rval){
 }
 
 HttpString* HttpString::cat(char rval){
-    while(this->capacity < 1 + this->length){
+    while(this->capacity < 5 + this->length){
         add_space();
     }
     this->base[this->length++] = rval;
@@ -105,6 +106,7 @@ std::shared_ptr<HttpString> HttpString::split(int start_pos, int end_pos){
 }
 
 void HttpString::strip(char ch){
+    if(this->length == 0) return;
     int start_pos = 0, end_pos = length - 1;
     if(ch == '\0'){
         while((base[end_pos] == ' ' || base[end_pos] == '\n') && start_pos < end_pos) end_pos--;
@@ -114,7 +116,7 @@ void HttpString::strip(char ch){
         while(base[end_pos--] == ch && start_pos < end_pos);
         while(base[start_pos++] == ch && start_pos < end_pos);
     }
-    char* new_space = new char[end_pos - start_pos];
+    char* new_space = new char[end_pos - start_pos + 5];
     length = 0;
     capacity = end_pos - start_pos;
     for(int i = start_pos;i <= end_pos;i++){
