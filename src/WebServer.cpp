@@ -4,11 +4,16 @@
 
 #include "headers/WebServer.h"
 #include "headers/HttpRequest.h"
+#include "headers/Utils.h"
+#include "headers/MapperEntity.h"
+#include "headers/Mapper.h"
+#include "headers/HttpResponse.h"
+#include "headers/HttpString.h"
+#include "headers/Resources.h"
 
 #include <boost/array.hpp>
 #include <iostream>
 #include <boost/bind.hpp>
-#include <fstream>
 #include <boost/filesystem.hpp>
 
 WebServer::WebServer(boost::asio::ip::tcp::socket socket):
@@ -26,7 +31,7 @@ void WebServer::read_message(){
 
     if(!err){
         http_request = new HttpRequest(buf.c_array());
-        http_response = new HttpResponse();
+        http_response = new HttpResponse(this);
     }
     else{
         std::cerr << err.message() << std::endl;
@@ -37,7 +42,7 @@ void WebServer::read_message(){
     this->invoke(http_request->get_url().c_str());
 }
 
-void WebServer::write_some(const HttpString& response_string){
+void WebServer::write_some(const HttpString response_string){
     try{
         this->socket_.write_some(boost::asio::buffer(response_string.c_str(), response_string.length));
     }
@@ -76,28 +81,27 @@ void WebServer::invoke(std::string path) {
 }
 
 void WebServer::return_403() {
-    this->write_some("HTTP/1.1 403 Forbidden\n\n");
+    http_response->set_code(403);
     std::string* path = Utils::utils->load_mapper()->get_global("403_page");
     std::ifstream* t = new std::ifstream{*path};
-
-    this->write_some(std::string((std::istreambuf_iterator<char>(*t)),
-            std::istreambuf_iterator<char>()) );
+    this->http_response->set_body(std::string((std::istreambuf_iterator<char>(*t)),
+            std::istreambuf_iterator<char>()).c_str());
     delete t;
 }
 
 void WebServer::return_static(std::string& path){
-    this->write_some("HTTP/1.1 200 OK\n\n");
+    http_response->set_code(200);
     std::ifstream* t = new std::ifstream{path};
-    this->write_some(std::string((std::istreambuf_iterator<char>(*t)),
-                                 std::istreambuf_iterator<char>()) );
+    this->http_response->set_body(std::string((std::istreambuf_iterator<char>(*t)),
+                                 std::istreambuf_iterator<char>()).c_str() );
 }
 
 void WebServer::return_404(){
-    this->write_some("HTTP/1.1 404 Not Found\n\n");
+    http_response->set_code(404);
     std::string* path = Utils::utils->load_mapper()->get_global("404_page");
     std::ifstream* t = new std::ifstream{*path};
 
-    this->write_some(std::string((std::istreambuf_iterator<char>(*t)),
-                                 std::istreambuf_iterator<char>()) );
+    this->http_response->set_body(std::string((std::istreambuf_iterator<char>(*t)),
+                                 std::istreambuf_iterator<char>()).c_str());
     delete t;
 }

@@ -1,14 +1,20 @@
 [global]
-default_dynamic_library = dynamic.so
-default_location = /tmp/keesto/build/debug/apps/
 403_page = /tmp/keesto/default/403.html
 404_page = /tmp/keesto/default/404.html
+default_dynamic_library = libkeesto_example.so
+default_location = /tmp/tmp.BlbHiNpfia/build/debug/
 
 [mapper0]
 method = GET
 path = /index
-dynamic_library = xxx
-function_name = test
+#location = /tmp/tmp.BlbHiNpfia/build/debug/
+#dynamic_library = libkeesto_example.so
+function_name = fffget_url
+
+[mapper1]
+method = GET
+path = /index1
+function_name = get_cookie
 
 [mysql]
 url =

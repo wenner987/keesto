@@ -5,6 +5,8 @@
 #include <fstream>
 #include <cstring>
 #include <iostream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
 
 #include "headers/Resources.h"
 #include "headers/Define.h"
@@ -17,33 +19,19 @@ Resources::~Resources(){
 }
 
 void Resources::read_conf(std::string path){
-    std::ifstream ifs{path, std::ios::binary};
-    std::string cnf_line;
-    char* front = new char[32];
-    char* end = new char[32];
-    while(getline(ifs, cnf_line)){
-        if(cnf_line == "") continue;
-        int status = 0; // record front or end in a line
-        int pos_in_sub = 0;
-        for(int i = 0;cnf_line[i] != '#' && cnf_line[i] != '\0';++i){
-            if(cnf_line[i] == '='){
-                status = 1;
-                front[pos_in_sub] = 0;
-                pos_in_sub = 0;
-            }
-            else if(cnf_line[i] == ' '){
-                continue;
-            }
-            else{
-                if(status == 0) front[pos_in_sub++] = cnf_line[i];
-                else end[pos_in_sub++] = cnf_line[i];
-            }
-        }
-        end[pos_in_sub] = 0;
-        global_cnf[front] = end;
+    boost::property_tree::ptree pt;
+    boost::property_tree::read_ini(path, pt);
+    std::string root_doc, port;
+    try{
+        root_doc = pt.get<std::string>("RootDoc");
     }
-    delete[] front;
-    delete[] end;
+    catch(...){}
+    try{
+        port = pt.get<std::string>("Port");
+    }
+    catch(...){}
+    this->global_cnf["RootDoc"] = root_doc;
+    this->global_cnf["Port"] = port;
 }
 
 const char* Resources::get_config(const char* name){

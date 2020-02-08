@@ -6,10 +6,9 @@
 #define KEESTO_HTTPREQUEST_H
 
 #include <map>
+#include "Define.h"
 
-#include "HttpString.h"
-#include "Utils.h"
-
+class HttpString;
 
 class HttpRequest {
 private:

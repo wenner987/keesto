@@ -7,7 +7,7 @@
 
 #include <map>
 
-#include "MapperEntity.h"
+class MapperEntity;
 
 class Mapper{
 private:

@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <boost/test/minimal.hpp>
 
 #include "../../src/headers/HttpString.h"
 #include "../../src/exception/IllegalAccessException.h"

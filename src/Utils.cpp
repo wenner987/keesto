@@ -11,7 +11,9 @@
 
 #include "headers/Utils.h"
 #include "headers/HttpResponse.h"
-
+#include "headers/Mapper.h"
+#include "headers/MapperEntity.h"
+#include "headers/Resources.h"
 
 
 std::shared_ptr<Utils> Utils::utils = std::make_shared<Utils>();

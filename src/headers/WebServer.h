@@ -8,8 +8,10 @@
 
 #include <boost/asio/ip/tcp.hpp>
 #include <memory>
-#include "HttpRequest.h"
-#include "HttpResponse.h"
+
+class HttpRequest;
+class HttpResponse;
+class HttpString;
 
 class WebServer: public std::enable_shared_from_this<WebServer>{
 private:
@@ -28,7 +30,7 @@ public:
 
     ~WebServer();
 
-    void write_some(const HttpString& response_string);
+    void write_some(const HttpString response_string);
 
     void start();
 

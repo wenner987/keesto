@@ -6,11 +6,13 @@
 #define KEESTO_UTILS_H
 
 #include <boost/shared_ptr.hpp>
-#include "Resources.h"
-#include "Mapper.h"
+#include <map>
+#include "Define.h"
 
 class HttpRequest;
 class HttpResponse;
+class Resources;
+class Mapper;
 
 class Utils {
 private:

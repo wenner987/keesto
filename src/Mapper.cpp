@@ -2,11 +2,12 @@
 // Created by Wenner on 2020/2/4.
 //
 
-#include "./headers/Mapper.h"
+#include "headers/Mapper.h"
 #include "headers/Utils.h"
+#include "headers/MapperEntity.h"
+#include "headers/Resources.h"
 
 #include <cstring>
-#include <iostream>
 
 #include <boost/property_tree/ini_parser.hpp>
 
@@ -28,11 +29,26 @@ void Mapper::read_mapper(const std::string& path){
     boost::property_tree::read_ini(path, pt);
     try{
         boost::property_tree::ptree global = pt.get_child("global");
-        this->global["default_dynamic_library"] = new std::string{global.get<std::string>("default_dynamic_library")};
-        this->global["default_location"] = new std::string{global.get<std::string>("default_location")};
-        this->global["403_page"] = new std::string{global.get<std::string>("403_page")};
-        this->global["404_page"] = new std::string{global.get<std::string>("404_page")};
-        this->use_mysql = global.get<std::string>("use_mysql") == "1" ? true : false;
+        try{
+            this->global["default_dynamic_library"] = new std::string{global.get<std::string>("default_dynamic_library")};
+        }
+        catch(...){}
+        try{
+            this->global["default_location"] = new std::string{global.get<std::string>("default_location")};
+        }
+        catch(...){}
+        try{
+            this->global["403_page"] = new std::string{global.get<std::string>("403_page")};
+        }
+        catch(...){}
+        try{
+            this->global["404_page"] = new std::string{global.get<std::string>("404_page")};
+        }
+        catch(...){}
+        try{
+            this->use_mysql = global.get<std::string>("use_mysql") == "1" ? true : false;
+        }
+        catch(...){}
     }
     catch (...){}
     try{

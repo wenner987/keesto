@@ -3,9 +3,11 @@
 //
 
 #include "headers/HttpRequest.h"
+#include "headers/HttpResponse.h"
+#include "headers/HttpString.h"
+#include "headers/Utils.h"
 
 #include <cstring>
-#include <iostream>
 
 void HttpRequest::get_headers_(char* msg){
     while(*msg != '\n') msg++;
@@ -190,6 +192,7 @@ HttpString HttpRequest::get_url(){
 void field_delete(std::map<HttpString*, HttpString*>* val){
     for(auto iter: *val){
         delete iter.second;
+        iter.second = nullptr;
         val->erase(iter.first);
         delete iter.first;
     }
